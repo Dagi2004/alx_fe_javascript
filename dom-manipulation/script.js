@@ -67,7 +67,7 @@ function createAddQuoteForm() {
   formContainer.appendChild(form);
 }
 
-function exportJSON() {
+function exportToJsonFile() {
   const jsonData = JSON.stringify(quotes);
   const blob = new Blob([jsonData], { type: "application.json" });
   const url = URL.createObjectURL(blob);
@@ -91,5 +91,5 @@ function importFromJsonFile(event) {
 
 showQuoteButton.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
-exportButton.addEventListener("click", exportJSON);
+exportButton.addEventListener("click", exportToJsonFile);
 importButton.addEventListener("onchange", importFromJsonFile);
