@@ -6,6 +6,7 @@ const categoryInput = document.getElementById("newQuoteCategory");
 const exportButton = document.getElementById("exportButton");
 const importButton = document.getElementById("importFile");
 const categoryFilter = document.getElementById("categoryFilter");
+const addNewButton = document.getElementById("addQuoteButton");
 
 let quotes = [
   {
@@ -166,10 +167,46 @@ async function syncQuotes() {
     filterQuotes();
   }
 }
+async function postServerQuote(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(quote),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to post quote:", error);
+    return null;
+  }
+}
 showQuoteButton.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
 populateCategories();
 filterQuotes();
 setInterval(syncQuotes, 10000); // Sync with server every 10 seconds
+addNewButton.addEventListener("click", async () => {
+  const newQuote = {
+    userId: 1,
+    title: "New Quote Title",
+    body: "This is the body of the new quote.",
+  };
+  const result = await postServerQuote(newQuote);
+  if (result) {
+    showNotification("New quote added to server");
+    // Optionally, add the new quote to the local quotes list and update UI
+    quotes.push({
+      quoteText: result.body,
+      category: "Server",
+    });
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+    populateCategories();
+    filterQuotes();
+  }
+});
+
 exportButton.addEventListener("click", exportToJsonFile);
 importButton.addEventListener("onchange", importFromJsonFile);
