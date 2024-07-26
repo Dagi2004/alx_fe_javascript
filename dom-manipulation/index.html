@@ -17,6 +17,12 @@
       accept=".json"
       onchange="importFromJsonFile(event)"
     />
+
+    <label for="filterQuote">Filter Quote:</label>
+
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+    </select>
     <script src="script.js"></script>
   </body>
 </html>
