@@ -138,7 +138,7 @@ function showNotification(message) {
     notification.style.display = "none";
   }, 3000);
 }
-async function fetchServerQuotes() {
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
     const serverQuotes = await response.json();
@@ -153,7 +153,7 @@ async function fetchServerQuotes() {
   }
 }
 async function syncQuotes() {
-  const serverQuotes = await fetchServerQuotes();
+  const serverQuotes = await fetchQuotesFromServer();
   if (serverQuotes.length > 0) {
     const newQuotes = [...serverQuotes, ...quotes];
     const uniqueQuotes = Array.from(
