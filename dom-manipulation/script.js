@@ -6,6 +6,7 @@ const categoryInput = document.getElementById("newQuoteCategory");
 const exportButton = document.getElementById("exportButton");
 const importButton = document.getElementById("importFile");
 const categoryFilter = document.getElementById("categoryFilter");
+
 let quotes = [
   {
     quoteText:
@@ -129,9 +130,46 @@ function filterQuotesArray() {
     ? quotes
     : quotes.filter((quote) => quote.category === selectedCategory);
 }
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  notification.style.display = "block";
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, 3000);
+}
+async function fetchServerQuotes() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const serverQuotes = await response.json();
+    const serverQuotesFormatted = serverQuotes.slice(0, 5).map((post) => ({
+      quoteText: post.body,
+      category: "Server",
+    }));
+    return serverQuotesFormatted;
+  } catch (error) {
+    console.log("Failed to fetch server Quotes:", error);
+    return [];
+  }
+}
+async function syncQuotes() {
+  const serverQuotes = await fetchServerQuotes();
+  if (serverQuotes.length > 0) {
+    const newQuotes = [...serverQuotes, ...quotes];
+    const uniqueQuotes = Array.from(
+      new Set(newQuotes.map((q) => q.quoteText))
+    ).map((quoteText) => newQuotes.find((q) => q.quoteText === quoteText));
+    quotes = uniqueQuotes;
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+    showNotification("Quotes synchronized with server");
+    populateCategories();
+    filterQuotes();
+  }
+}
 showQuoteButton.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
 populateCategories();
 filterQuotes();
+setInterval(syncQuotes, 10000); // Sync with server every 10 seconds
 exportButton.addEventListener("click", exportToJsonFile);
 importButton.addEventListener("onchange", importFromJsonFile);
