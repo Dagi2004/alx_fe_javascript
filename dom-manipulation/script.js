@@ -162,7 +162,7 @@ async function syncQuotes() {
     ).map((quoteText) => newQuotes.find((q) => q.quoteText === quoteText));
     quotes = uniqueQuotes;
     localStorage.setItem("quotes", JSON.stringify(quotes));
-    showNotification("Quotes synchronized with server");
+    showNotification("Quotes synced with server!");
     populateCategories();
     filterQuotes();
   }
